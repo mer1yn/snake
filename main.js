@@ -1,66 +1,82 @@
 var canvas = null;
 var context = null;
-var direction = 0;
-
 var snake = null;
 
-(function(){
+var directions = [0,0,0,0,0];
+var direction = 0;
+
+function main(){
   canvas = document.getElementById('canvas');
   context = canvas.getContext('2d');
-
-
   snake = new Snake();
-  console.log(snake);
-})();
+
+}
 
 var fps = setInterval(function(){
-  erase();
+  clear();
+
+
 
   update();
-
   snake.show();
 
+
+
+
+  directions.push(direction);
+  directions.splice(0,1);
+  console.log(directions);
 },100);
-
-
-function erase(){
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-}
 
 function Snake(){
   this.x = 0;
   this.y = 0;
-  this.width = 20;
+  this.dots = [new Dot(0,0), new Dot(0,20), new Dot(0,40), new Dot(0,60),new Dot(0,80)];
+
+  this.show = function(){
+    this.dots.forEach(function(dot){
+      dot.show();
+    })
+  }
+}
+
+function Dot(x,y){
+  this.x = x;
+  this.y = y;
   this.height = 20;
+  this.width = 20;
 
   this.show = function(){
     context.fillStyle = 'white';
-    context.fillRect(this.x,this.y, this.width, this.height);
+    context.fillRect(this.x,this.y,this.width, this.height);
   }
 }
 
 function update(){
-  switch (direction) {
-    case 0:
-      snake.y += 20;
-      break;
-    case 1:
-      snake.x += 20;
-      break;
-    case 2:
-      snake.y -= 20;
-      break;
-    case 3:
-      snake.x -= 20;
-      break;
-
+  for (var i = 0; i < snake.dots.length; i++) {
+    switch (directions[i]) {
+      case 0:
+        snake.dots[i].y += 20;
+        break;
+      case 1:
+        snake.dots[i].x += 20;
+        break;
+      case 2:
+        snake.dots[i].y -= 20;
+        break;
+      case 3:
+        snake.dots[i].x -= 20;
+        break;
+    }
   }
 }
 
+function clear(){
+  context.fillStyle = 'black';
+  context.fillRect(0,0,canvas.width, canvas.height);
+}
 
 document.addEventListener("keydown",function(e){
-  console.log(e.key);
   switch (e.key) {
     case "ArrowUp":
       if (direction != 0) {
@@ -84,6 +100,5 @@ document.addEventListener("keydown",function(e){
       break;
     default:
       console.log("ggg");
-
   }
 });
